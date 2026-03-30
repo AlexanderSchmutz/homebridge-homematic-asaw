@@ -55,9 +55,10 @@ function HomeMaticPlatform (log, config, api) {
 
     // Silence the hello stuff in tests
     this.log.info('Homematic Plugin Version ' + this.getVersion())
-    this.log.info('Plugin by thkl  https://github.com/thkl')
+    this.log.info('Original plugin by thkl  https://github.com/thkl')
+    this.log.info('Maintained fork: https://github.com/AlexanderSchmutz/homebridge-homematic-asaw')
     this.log.info('Homematic is a registered trademark of the EQ-3 AG')
-    this.log.info('Please report any issues to https://github.com/thkl/homebridge-homematic/issues')
+    this.log.info('Please report any issues to https://github.com/AlexanderSchmutz/homebridge-homematic-asaw/issues')
     this.log.info('running in production mode')
     this.log.info('will connect to your ccu at %s', this.ccuIP)
     this.log.warn('IMPORTANT !! Starting this version, your homematic custom configuration is located in %s', this.localHomematicConfig)
