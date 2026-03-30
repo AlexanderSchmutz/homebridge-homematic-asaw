@@ -70,6 +70,7 @@ HomeMaticHomeKitIPThermostatService.prototype.createDeviceService = function (Se
     }.bind(this))
 
   this.cctemp.eventEnabled = true
+  this.setCurrentStateCharacteristic('ACTUAL_TEMPERATURE', this.cctemp)
 
   this.cchum = thermo.getCharacteristic(Characteristic.CurrentRelativeHumidity)
     .on('get', function (callback) {
@@ -79,6 +80,7 @@ HomeMaticHomeKitIPThermostatService.prototype.createDeviceService = function (Se
     }.bind(this))
 
   this.cchum.eventEnabled = true
+  this.setCurrentStateCharacteristic('HUMIDITY', this.cchum)
 
   this.ttemp = thermo.getCharacteristic(Characteristic.TargetTemperature)
     .setProps({ minValue: 6.0, maxValue: 30.5, minStep: 0.1 })
@@ -100,6 +102,7 @@ HomeMaticHomeKitIPThermostatService.prototype.createDeviceService = function (Se
     }.bind(this))
 
   this.ttemp.eventEnabled = true
+  this.setCurrentStateCharacteristic('SET_POINT_TEMPERATURE', this.ttemp)
 
   thermo.getCharacteristic(Characteristic.TemperatureDisplayUnits)
     .on('get', function (callback) {

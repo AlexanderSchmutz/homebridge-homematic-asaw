@@ -77,6 +77,7 @@ HomeMaticHomeKitThermalControlService.prototype.createDeviceService = function (
   this.targetMode.eventEnabled = true
 
   this.currentTemperatureCharacteristic = this.thermostat.getCharacteristic(Characteristic.CurrentTemperature)
+    .setProps({ minValue: -100 })
     .on('get', function (callback) {
       that.remoteGetValue('ACTUAL_TEMPERATURE', function (value) {
         that.log.debug('[TCS] Saving %s for %s', value, that.adress)
@@ -86,6 +87,7 @@ HomeMaticHomeKitThermalControlService.prototype.createDeviceService = function (
     })
 
   this.currentTemperatureCharacteristic.eventEnabled = true
+  this.setCurrentStateCharacteristic('ACTUAL_TEMPERATURE', this.currentTemperatureCharacteristic)
 
   if (this.type === 'THERMALCONTROL_TRANSMIT') {
     this.currentHumidityCharacteristic = this.thermostat.getCharacteristic(Characteristic.CurrentRelativeHumidity)
@@ -97,6 +99,7 @@ HomeMaticHomeKitThermalControlService.prototype.createDeviceService = function (
       })
 
     this.currentHumidityCharacteristic.eventEnabled = true
+    this.setCurrentStateCharacteristic('ACTUAL_HUMIDITY', this.currentHumidityCharacteristic)
   }
 
   this.targetTemperatureCharacteristic = this.thermostat.getCharacteristic(Characteristic.TargetTemperature)
@@ -134,6 +137,7 @@ HomeMaticHomeKitThermalControlService.prototype.createDeviceService = function (
     })
 
   this.targetTemperatureCharacteristic.eventEnabled = true
+  this.setCurrentStateCharacteristic('SET_TEMPERATURE', this.targetTemperatureCharacteristic)
 
   this.thermostat.getCharacteristic(Characteristic.TemperatureDisplayUnits)
     .on('get', function (callback) {

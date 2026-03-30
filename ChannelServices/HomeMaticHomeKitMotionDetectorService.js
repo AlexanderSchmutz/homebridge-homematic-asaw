@@ -42,6 +42,7 @@ HomeMaticHomeKitMotionDetectorService.prototype.createDeviceService = function (
     })
 
   this.cbright.eventEnabled = true
+  this.setCurrentStateCharacteristic('BRIGHTNESS', this.cbright)
   this.services.push(brightness)
 
   this.addTamperedCharacteristic(sensor, Characteristic)

@@ -26,6 +26,7 @@ HomeMaticHomeKitMotionDetectorServiceIP.prototype.createDeviceService = function
     })
 
   this.cMotion.eventEnabled = true
+  this.setCurrentStateCharacteristic('MOTION', this.cMotion)
   this.services.push(sensor)
   this.remoteGetValue('MOTION')
 
@@ -34,7 +35,7 @@ HomeMaticHomeKitMotionDetectorServiceIP.prototype.createDeviceService = function
     this.cBrightness = brightness.getCharacteristic(Characteristic.CurrentAmbientLightLevel)
       .on('get', function (callback) {
         that.query('ILLUMINATION', function (value) {
-          callback(null, value)
+          if (callback) callback(null, value)
         })
       })
 
@@ -49,6 +50,7 @@ HomeMaticHomeKitMotionDetectorServiceIP.prototype.createDeviceService = function
     })
 
     this.cBrightness.eventEnabled = true
+    this.setCurrentStateCharacteristic('ILLUMINATION', this.cBrightness)
     this.services.push(brightness)
   }
 
@@ -66,8 +68,11 @@ HomeMaticHomeKitMotionDetectorServiceIP.prototype.datapointEvent = function (dp,
     this.cMotion.updateValue(newValue, null)
   }
 
-  if ((dp === 'ILLUMINATION') ||  (dp === '1.ILLUMINATION')) {
-    this.cBrightness(parseFloat(newValue), null)
+  if (((dp === 'ILLUMINATION') || (dp === '1.ILLUMINATION')) && (this.cBrightness !== undefined)) {
+    let illumination = this.sanitizeDatapointValue('ILLUMINATION', newValue, this.cBrightness.value)
+    if (illumination !== undefined) {
+      this.cBrightness.updateValue(illumination, null)
+    }
   }
 }
 

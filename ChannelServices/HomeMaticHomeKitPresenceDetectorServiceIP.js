@@ -33,7 +33,10 @@ HomeMaticHomeKitPresenceDetectorServiceIP.prototype.createDeviceService = functi
   var cbright = brightness.getCharacteristic(Characteristic.CurrentAmbientLightLevel)
     .on('get', function (callback) {
       that.query('ILLUMINATION', function (value) {
-        callback(null, value / 10)
+        let illumination = that.sanitizeDatapointValue('ILLUMINATION', value / 10, cbright.value)
+        if ((callback) && (illumination !== undefined)) {
+          callback(null, illumination)
+        }
       })
     })
 

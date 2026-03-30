@@ -27,6 +27,7 @@ HomeMaticHomeKitThermostatWeatherService.prototype.createDeviceService = functio
     })
 
   this.ctemp.eventEnabled = true
+  this.setCurrentStateCharacteristic('TEMPERATURE', this.ctemp)
 
   var humidity = new Service.HumiditySensor(this.name)
   this.services.push(humidity)
@@ -40,6 +41,7 @@ HomeMaticHomeKitThermostatWeatherService.prototype.createDeviceService = functio
     })
 
   this.chum.eventEnabled = true
+  this.setCurrentStateCharacteristic('HUMIDITY', this.chum)
   this.queryData()
 }
 

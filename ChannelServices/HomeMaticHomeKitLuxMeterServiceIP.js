@@ -28,7 +28,10 @@ HomeMaticHomeKitLuxMeterServiceIP.prototype.createDeviceService = function (Serv
 
 HomeMaticHomeKitLuxMeterServiceIP.prototype.datapointEvent = function (dp, newValue) {
   if (this.isDataPointEvent(dp, 'LUX')) {
-    this.cbright.updateValue(parseFloat(newValue), null)
+    let lux = this.sanitizeDatapointValue('LUX', newValue, this.cbright.value)
+    if (lux !== undefined) {
+      this.cbright.updateValue(lux, null)
+    }
   }
 }
 

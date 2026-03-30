@@ -137,6 +137,45 @@ HomeKitGenericService.prototype = {
     return this.currentStateCharacteristic[key]
   },
 
+  resolveCurrentStateCharacteristic: function (dp) {
+    if (typeof dp !== 'string') {
+      return undefined
+    }
+
+    let candidates = [dp]
+    let lastDot = dp.lastIndexOf('.')
+    if (lastDot > -1) {
+      let datapointName = dp.substring(lastDot + 1)
+      candidates.push(datapointName)
+
+      let lastColon = dp.lastIndexOf(':')
+      if ((lastColon > -1) && (lastColon < lastDot)) {
+        let channel = dp.substring(lastColon + 1, lastDot)
+        if (channel.length > 0) {
+          candidates.push(channel + '.' + datapointName)
+        }
+      }
+    }
+
+    let transformed = this.transformDatapoint(dp)
+    if (Array.isArray(transformed) && (transformed.length === 2)) {
+      candidates.push(transformed[1])
+      if ((this.channelnumber !== undefined) && (this.channelnumber !== null)) {
+        candidates.push(this.channelnumber + '.' + transformed[1])
+      }
+    }
+
+    let uniq = Array.from(new Set(candidates))
+    for (let i = 0; i < uniq.length; i++) {
+      let candidate = uniq[i]
+      if (this.currentStateCharacteristic[candidate] !== undefined) {
+        return this.currentStateCharacteristic[candidate]
+      }
+    }
+
+    return undefined
+  },
+
   /**
      * Check if the Event was triggerd by a Datapointname
      * @param  {[type]} dp_i    Eventkey
@@ -392,22 +431,25 @@ HomeKitGenericService.prototype = {
     if (that.usecache === false) {
       that.remoteGetValue(dp, function (value) {
         if (callback !== undefined) {
-          callback(value)
+          let sanitized = that.sanitizeDatapointValue(dp, value, value)
+          callback(sanitized !== undefined ? sanitized : value)
         }
       })
     } else
 
     if (that.usecache === true) {
       let cvalue = that.getCache(dp)
-      if (cvalue) {
+      if (cvalue !== undefined) {
         if (callback) {
-          callback(cvalue)
+          let sanitized = that.sanitizeDatapointValue(dp, cvalue, cvalue)
+          callback(sanitized !== undefined ? sanitized : cvalue)
         }
       } else {
         that.remoteGetValue(dp, function (value) {
           that.setCache(dp, value)
           if (callback !== undefined) {
-            callback(value)
+            let sanitized = that.sanitizeDatapointValue(dp, value, value)
+            callback(sanitized !== undefined ? sanitized : value)
           }
         })
       }
@@ -451,7 +493,7 @@ HomeKitGenericService.prototype = {
 
   convertValue: function (dp, value) {
     var result = value
-    var char = this.currentStateCharacteristic[dp]
+    var char = this.resolveCurrentStateCharacteristic(dp)
     if (char !== undefined) {
       this.log.debug('[Generic] Format is:%s', char.props.format)
       switch (char.props.format) {
@@ -583,12 +625,20 @@ HomeKitGenericService.prototype = {
         that.eventupdate = true
         // var ow = newValue;
         newValue = that.convertValue(dp, newValue)
+        let sanitizedNewValue = that.sanitizeDatapointValue(dp, newValue, newValue)
+        if (sanitizedNewValue !== undefined) {
+          newValue = sanitizedNewValue
+        }
         that.log.debug('[Generic] will cache %s for %s', newValue, dpadr)
         that.cache(dpadr, newValue)
         that.eventupdate = false
       } else {
         // newValue = 0;
         newValue = that.convertValue(dp, 0)
+        let sanitizedFallbackValue = that.sanitizeDatapointValue(dp, newValue, newValue)
+        if (sanitizedFallbackValue !== undefined) {
+          newValue = sanitizedFallbackValue
+        }
       }
 
       if (callback !== undefined) {
@@ -735,6 +785,11 @@ HomeKitGenericService.prototype = {
         }
         that.isWorking = newValue
       }
+
+      let sanitizedEventValue = this.sanitizeDatapointValue(tp[0] + '.' + tp[1], newValue, newValue)
+      if (sanitizedEventValue !== undefined) {
+        newValue = sanitizedEventValue
+      }
       this.eventupdate = true
 
       if (typeof optionalFunction === 'function') {
@@ -815,6 +870,32 @@ HomeKitGenericService.prototype = {
     return sanitized
   },
 
+  sanitizeDatapointValue: function (dp, value, fallbackValue) {
+    let characteristic = this.resolveCurrentStateCharacteristic(dp)
+    if (characteristic === undefined) {
+      return value
+    }
+
+    let sanitized = this.sanitizeCharacteristicValue(characteristic, value)
+    if ((sanitized === undefined) && (fallbackValue !== undefined)) {
+      sanitized = this.sanitizeCharacteristicValue(characteristic, fallbackValue)
+    }
+    if ((sanitized === undefined) && (characteristic.value !== undefined)) {
+      sanitized = this.sanitizeCharacteristicValue(characteristic, characteristic.value)
+    }
+
+    if (sanitized === undefined) {
+      let props = characteristic.props || {}
+      if (typeof props.minValue === 'number') {
+        sanitized = props.minValue
+      } else if (typeof props.maxValue === 'number') {
+        sanitized = props.maxValue
+      }
+    }
+
+    return sanitized
+  },
+
   cache: function (dp, value) {
     var that = this
 
@@ -827,9 +908,9 @@ HomeKitGenericService.prototype = {
       }
     }
     if ((value !== undefined) && ((that.isWorking === false) || (that.ignoreWorking === true))) {
-      if (that.currentStateCharacteristic[dp] !== undefined) {
-        let characteristic = that.currentStateCharacteristic[dp]
-        let sanitized = that.sanitizeCharacteristicValue(characteristic, value)
+      let characteristic = that.resolveCurrentStateCharacteristic(dp)
+      if (characteristic !== undefined) {
+        let sanitized = that.sanitizeDatapointValue(dp, value, value)
         if (sanitized === undefined) {
           that.log.debug('[Generic] Skip invalid value for %s: %s', dp, value)
           return

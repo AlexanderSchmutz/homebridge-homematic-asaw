@@ -77,6 +77,7 @@ HomeMaticHomeKitThermostatService.prototype.createDeviceService = function (Serv
     })
 
   self.currentTempCharacteristic.eventEnabled = true
+  self.setCurrentStateCharacteristic('1.TEMPERATURE', self.currentTempCharacteristic)
 
   self.currentHumidityCharacteristic = thermo.getCharacteristic(Characteristic.CurrentRelativeHumidity)
     .on('get', function (callback) {
@@ -89,6 +90,7 @@ HomeMaticHomeKitThermostatService.prototype.createDeviceService = function (Serv
     })
 
   self.currentHumidityCharacteristic.eventEnabled = true
+  self.setCurrentStateCharacteristic('1.HUMIDITY', self.currentHumidityCharacteristic)
 
   self.TargetTemperatureCharacteristic = thermo.getCharacteristic(Characteristic.TargetTemperature)
     .setProps({
@@ -121,6 +123,7 @@ HomeMaticHomeKitThermostatService.prototype.createDeviceService = function (Serv
     })
 
   self.TargetTemperatureCharacteristic.eventEnabled = true
+  self.setCurrentStateCharacteristic('2.SETPOINT', self.TargetTemperatureCharacteristic)
 
   thermo.getCharacteristic(Characteristic.TemperatureDisplayUnits)
     .on('get', function (callback) {
