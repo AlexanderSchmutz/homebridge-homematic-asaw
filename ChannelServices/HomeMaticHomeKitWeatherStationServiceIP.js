@@ -277,9 +277,9 @@ HomeMaticHomeKitWeatherStationServiceIP.prototype.queryData = function () {
   var that = this
 
   this.query('ACTUAL_TEMPERATURE', function (value) {
-    that.currentTemperature = parseFloat(value)
+    that.currentTemperature = that.toFiniteNumber(value, that.currentTemperature)
     that.query('HUMIDITY', function (value) {
-      that.currentHumidity = parseFloat(value)
+      that.currentHumidity = that.toRangedPercentage(value, that.currentHumidity, 0, 100)
       if ((that.currentTemperature > -255) && (that.currentHumidity > -255)) {
         that.addLogEntry({
           temp: that.currentTemperature,
@@ -298,37 +298,61 @@ HomeMaticHomeKitWeatherStationServiceIP.prototype.queryData = function () {
 
 HomeMaticHomeKitWeatherStationServiceIP.prototype.datapointEvent = function (dp, newValue) {
   if (this.isDataPointEvent(dp, 'ACTUAL_TEMPERATURE')) {
-    this.currentTemperature = parseFloat(newValue)
-    this.ctemp.updateValue(parseFloat(newValue), null)
+    let temperature = this.toFiniteNumber(newValue, this.currentTemperature)
+    if (Number.isFinite(temperature)) {
+      this.currentTemperature = temperature
+      this.ctemp.updateValue(temperature, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'HUMIDITY')) {
-    this.currentHumidity = parseFloat(newValue)
-    this.chum.updateValue(parseFloat(newValue), null)
+    let humidity = this.toRangedPercentage(newValue, this.currentHumidity, 0, 100)
+    if (Number.isFinite(humidity)) {
+      this.currentHumidity = humidity
+      this.chum.updateValue(humidity, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'ILLUMINATION')) {
-    this.cbright.updateValue(parseFloat(newValue), null)
+    let illumination = this.toFiniteNumber(newValue, NaN)
+    if (Number.isFinite(illumination)) {
+      this.cbright.updateValue(illumination, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'SUNSHINEDURATION')) {
-    this.csunshineduration.updateValue(parseFloat(newValue), null)
+    let sunshineDuration = this.toFiniteNumber(newValue, NaN)
+    if (Number.isFinite(sunshineDuration)) {
+      this.csunshineduration.updateValue(sunshineDuration, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'WIND_SPEED')) {
-    this.cwindspeed.updateValue(parseFloat(newValue), null)
+    let windSpeed = this.toFiniteNumber(newValue, NaN)
+    if (Number.isFinite(windSpeed)) {
+      this.cwindspeed.updateValue(windSpeed, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'RAIN_COUNTER')) {
-    this.craincount.updateValue(parseFloat(newValue), null)
+    let rainCounter = this.toFiniteNumber(newValue, NaN)
+    if (Number.isFinite(rainCounter)) {
+      this.craincount.updateValue(rainCounter, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'WIND_DIR')) {
-    this.cwinddirection.updateValue(parseFloat(newValue), null)
+    let windDirection = this.toFiniteNumber(newValue, NaN)
+    if (Number.isFinite(windDirection)) {
+      this.cwinddirection.updateValue(windDirection, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'WIND_DIR_RANGE')) {
-    this.cwindrange.updateValue(parseFloat(newValue), null)
+    let windDirectionRange = this.toFiniteNumber(newValue, NaN)
+    if (Number.isFinite(windDirectionRange)) {
+      this.cwindrange.updateValue(windDirectionRange, null)
+    }
   }
 
   // make this call a little less often

@@ -198,27 +198,32 @@ HomeMaticHomeKitThermalControlService.prototype.processChange = function (dp, ne
   this.log.debug('[TCS] processChange %s with %s', dp, newValue)
   if (this.isDataPointEvent(dp, 'ACTUAL_TEMPERATURE')) {
     this.log.debug('[TCS] set currentTemperature to %s', newValue)
-    this.currentTemperature = parseFloat(newValue)
-    this.currentTemperatureCharacteristic.updateValue(this.currentTemperature, null)
+    this.currentTemperature = this.toFiniteNumber(newValue, this.currentTemperature)
+    if (Number.isFinite(this.currentTemperature)) {
+      this.currentTemperatureCharacteristic.updateValue(this.currentTemperature, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'ACTUAL_HUMIDITY')) {
     this.log.debug('[TCS] set currentHumidity to %s', newValue)
-    this.currentHumidity = parseFloat(newValue)
-    if (this.currentHumidityCharacteristic !== undefined) {
+    this.currentHumidity = this.toRangedPercentage(newValue, this.currentHumidity, 0, 100)
+    if ((this.currentHumidityCharacteristic !== undefined) && Number.isFinite(this.currentHumidity)) {
       this.currentHumidityCharacteristic.updateValue(this.currentHumidity, null)
     }
   }
   if (this.isDataPointEvent(dp, 'SET_TEMPERATURE')) {
     this.log.debug('[TCS] set targetTemperature to %s', newValue)
-    if (parseFloat(newValue) === 4.5) {
-      this.targetMode.updateValue(0, null)
-      this.currentmode.updateValue(0, null)
-    } else {
-      this.targetMode.updateValue(1, null)
-      this.currentmode.updateValue(1, null)
+    this.targetTemperature = this.toFiniteNumber(newValue, this.targetTemperature)
+    if (Number.isFinite(this.targetTemperature)) {
+      if (this.targetTemperature === 4.5) {
+        this.targetMode.updateValue(0, null)
+        this.currentmode.updateValue(0, null)
+      } else {
+        this.targetMode.updateValue(1, null)
+        this.currentmode.updateValue(1, null)
+      }
+      this.targetTemperatureCharacteristic.updateValue(this.targetTemperature, null)
     }
-    this.targetTemperatureCharacteristic.updateValue(parseFloat(newValue), null)
   }
 
   if (this.currentTemperature > -255) {

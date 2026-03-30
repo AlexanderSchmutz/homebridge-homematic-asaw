@@ -569,7 +569,7 @@ HomeKitGenericService.prototype = {
       that.log.debug('[Generic] got value for %s (Value:%s)', dpadr, newValue)
       if ((newValue !== undefined) && (newValue !== null)) {
         if (tp[1] === 'LEVEL') {
-          newValue = newValue * 100
+          newValue = that.normalizeLevelValue(newValue)
         }
 
         if ((tp[1] === 'COLOR') && (that.type === 'RGBW_COLOR')) {
@@ -683,7 +683,7 @@ HomeKitGenericService.prototype = {
       }
 
       if (tp[1] === 'LEVEL') {
-        newValue = newValue * 100
+        newValue = this.normalizeLevelValue(newValue)
       }
       if ((tp[1] === 'COLOR') && (this.type === 'RGBW_COLOR')) {
         newValue = Math.round((newValue / 199) * 360)
@@ -951,6 +951,54 @@ HomeKitGenericService.prototype = {
     }
 
     return result
+  },
+
+  toFiniteNumber: function (value, fallback) {
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : fallback
+    }
+
+    if (typeof value === 'string') {
+      let parsed = parseFloat(value)
+      return Number.isFinite(parsed) ? parsed : fallback
+    }
+
+    return fallback
+  },
+
+  toRangedPercentage: function (value, fallback, min, max) {
+    let numeric = this.toFiniteNumber(value, fallback)
+    if (!Number.isFinite(numeric)) {
+      return fallback
+    }
+
+    if (numeric < min) {
+      return min
+    }
+    if (numeric > max) {
+      return max
+    }
+    return numeric
+  },
+
+  normalizeLevelValue: function (value) {
+    let numeric = this.toFiniteNumber(value, value)
+    if (!Number.isFinite(numeric)) {
+      return numeric
+    }
+
+    if ((numeric > 100) || (numeric < -100)) {
+      numeric = numeric / 100
+    } else if ((numeric >= -1) && (numeric <= 1)) {
+      numeric = numeric * 100
+    }
+
+    return numeric
+  },
+
+  normalizeBlindPositionValue: function (value, fallback) {
+    let normalized = this.normalizeLevelValue(value)
+    return this.toRangedPercentage(normalized, fallback, 0, 100)
   },
 
   didMatch: function (v1, v2) {

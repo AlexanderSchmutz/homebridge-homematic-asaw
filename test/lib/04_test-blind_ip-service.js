@@ -134,5 +134,25 @@ describe('Homematic Plugin (index)', function () {
       })
       done()
     })
+
+    it('event test blind with raw percent value 100%', function (done) {
+      platform.xmlrpc.event(['HmIP-RF', 'ADR1234567890:4', 'LEVEL', 100])
+      that.accessories.map(ac => {
+        let s = ac.get_Service(Service.WindowCovering)
+        assert.ok(s, 'Service.WindowCovering not found in Blind %s', ac.name)
+        let ccp = s.getCharacteristic(Characteristic.CurrentPosition)
+        assert.ok(ccp, 'Characteristic.CurrentPosition not found in Blind %s', ac.name)
+        ccp.getValue(function (context, value) {
+          assert.strict.equal(value, 100)
+        })
+
+        let ctp = s.getCharacteristic(Characteristic.TargetPosition)
+        assert.ok(ctp, 'Characteristic.TargetPosition not found in Blind %s', ac.name)
+        ctp.getValue(function (context, value) {
+          assert.strict.equal(value, 100)
+        })
+      })
+      done()
+    })
   })
 })

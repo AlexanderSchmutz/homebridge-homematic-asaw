@@ -33,6 +33,7 @@ HomeMaticHomeKitBlindService.prototype.createDeviceService = function (Service, 
   this.currentPos = blind.getCharacteristic(Characteristic.CurrentPosition)
     .on('get', (callback) => {
       this.query('LEVEL', (value) => {
+        value = this.normalizeBlindPositionValue(value, this.currentLevel)
         if (value < this.minValueForClose) {
           value = 0
         }
@@ -48,6 +49,7 @@ HomeMaticHomeKitBlindService.prototype.createDeviceService = function (Service, 
   this.targetPos = blind.getCharacteristic(Characteristic.TargetPosition)
     .on('get', (callback) => {
       this.query('LEVEL', (value) => {
+        value = this.normalizeBlindPositionValue(value, this.currentLevel)
         if (callback) {
           if (value <= this.minValueForClose) {
             value = 0
@@ -137,6 +139,7 @@ HomeMaticHomeKitBlindService.prototype.queryData = function (value) {
 // https://github.com/thkl/homebridge-homematic/issues/208
 // if there is a custom close level and the real level is below homekit will get the 0% ... and visevera for max level
 HomeMaticHomeKitBlindService.prototype.setFinalBlindLevel = function (value) {
+  value = this.normalizeBlindPositionValue(value, this.currentLevel)
   if (value < this.minValueForClose) {
     value = 0
   }
@@ -175,8 +178,9 @@ HomeMaticHomeKitBlindService.prototype.datapointEvent = function (dp, value) {
   // }
 
   if (this.isDataPointEvent(dp, 'LEVEL')) {
-    this.currentLevel = value
-    this.currentPos.updateValue(value, null)
+    let normalizedLevel = this.normalizeBlindPositionValue(value, this.currentLevel)
+    this.currentLevel = normalizedLevel
+    this.currentPos.updateValue(normalizedLevel, null)
   }
 
   if (this.isDataPointEvent(dp, 'WORKING')) {

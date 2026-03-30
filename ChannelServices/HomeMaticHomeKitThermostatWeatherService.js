@@ -46,9 +46,9 @@ HomeMaticHomeKitThermostatWeatherService.prototype.createDeviceService = functio
 HomeMaticHomeKitThermostatWeatherService.prototype.queryData = function () {
   var that = this
   this.query('TEMPERATURE', function (value) {
-    that.currentTemperature = parseFloat(value)
+    that.currentTemperature = that.toFiniteNumber(value, that.currentTemperature)
     that.query('HUMIDITY', function (value) {
-      that.currentHumidity = parseFloat(value)
+      that.currentHumidity = that.toRangedPercentage(value, that.currentHumidity, 0, 100)
       if ((that.currentTemperature > -255) && (that.currentHumidity > -255)) {
         that.ctemp.updateValue(that.currentTemperature, null)
         that.chum.updateValue(that.currentHumidity, null)
@@ -66,13 +66,17 @@ HomeMaticHomeKitThermostatWeatherService.prototype.shutdown = function () {
 
 HomeMaticHomeKitThermostatWeatherService.prototype.datapointEvent = function (dp, newValue) {
   if (this.isDataPointEvent(dp, 'TEMPERATURE')) {
-    this.ctemp.updateValue(parseFloat(newValue), null)
-    this.currentTemperature = parseFloat(newValue)
+    this.currentTemperature = this.toFiniteNumber(newValue, this.currentTemperature)
+    if (Number.isFinite(this.currentTemperature)) {
+      this.ctemp.updateValue(this.currentTemperature, null)
+    }
   }
 
   if (this.isDataPointEvent(dp, 'HUMIDITY')) {
-    this.chum.updateValue(parseFloat(newValue), null)
-    this.currentHumidity = parseFloat(newValue)
+    this.currentHumidity = this.toRangedPercentage(newValue, this.currentHumidity, 0, 100)
+    if (Number.isFinite(this.currentHumidity)) {
+      this.chum.updateValue(this.currentHumidity, null)
+    }
   }
 
   if ((this.currentTemperature > -255) && (this.currentHumidity > -255)) {

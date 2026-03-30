@@ -48,9 +48,9 @@ HomeMaticHomeKitThermostatWeatherServiceIP.prototype.createDeviceService = funct
 HomeMaticHomeKitThermostatWeatherServiceIP.prototype.queryData = function () {
   var that = this
   this.query('ACTUAL_TEMPERATURE', function (value) {
-    that.currentTemperature = parseFloat(value)
+    that.currentTemperature = that.toFiniteNumber(value, that.currentTemperature)
     that.query('HUMIDITY', function (value) {
-      that.currentHumidity = parseFloat(value)
+      that.currentHumidity = that.toRangedPercentage(value, that.currentHumidity, 0, 100)
       if ((that.currentTemperature > -255) && (that.currentHumidity > -255)) {
         that.addLogEntry({ temp: that.currentTemperature, pressure: 0, humidity: that.currentHumidity })
       }
@@ -66,11 +66,11 @@ HomeMaticHomeKitThermostatWeatherServiceIP.prototype.shutdown = function () {
 
 HomeMaticHomeKitThermostatWeatherServiceIP.prototype.datapointEvent = function (dp, newValue) {
   if (this.isDataPointEvent(dp, 'ACTUAL_TEMPERATURE')) {
-    this.currentTemperature = parseFloat(newValue)
+    this.currentTemperature = this.toFiniteNumber(newValue, this.currentTemperature)
   }
 
   if (this.isDataPointEvent(dp, 'HUMIDITY')) {
-    this.currentHumidity = parseFloat(newValue)
+    this.currentHumidity = this.toRangedPercentage(newValue, this.currentHumidity, 0, 100)
   }
 
   if ((this.currentTemperature > -255) && (this.currentHumidity > -255)) {

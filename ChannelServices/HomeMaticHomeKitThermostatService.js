@@ -142,15 +142,23 @@ HomeMaticHomeKitThermostatService.prototype.createDeviceService = function (Serv
 HomeMaticHomeKitThermostatService.prototype.queryData = function () {
   let self = this
   self.query('1.HUMIDITY', function (value) {
-    self.addLogEntry({
-      humidity: parseFloat(value)
-    })
+    let humidity = self.toRangedPercentage(value, self.toFiniteNumber(self.currentHumidity, NaN), 0, 100)
+    if (Number.isFinite(humidity)) {
+      self.currentHumidity = humidity
+      self.addLogEntry({
+        humidity: humidity
+      })
+    }
   })
 
   self.query('1.TEMPERATURE', function (value) {
-    self.addLogEntry({
-      currentTemp: parseFloat(value)
-    })
+    let temperature = self.toFiniteNumber(value, self.toFiniteNumber(self.currentTemperature, NaN))
+    if (Number.isFinite(temperature)) {
+      self.currentTemperature = temperature
+      self.addLogEntry({
+        currentTemp: temperature
+      })
+    }
   })
   // create timer to query device every 10 minutes
   self.refreshTimer = setTimeout(function () {
@@ -167,24 +175,36 @@ HomeMaticHomeKitThermostatService.prototype.datapointEvent = function (dp, newVa
   let self = this
   this.log.debug('[LTS] datapointEvent %s (%s)', dp, newValue)
   if (dp === '1.TEMPERATURE') {
-    self.addLogEntry({
-      currentTemp: parseFloat(newValue)
-    })
-    this.currentTempCharacteristic.updateValue(parseFloat(newValue), null)
+    let temperature = this.toFiniteNumber(newValue, this.toFiniteNumber(this.currentTemperature, NaN))
+    if (Number.isFinite(temperature)) {
+      this.currentTemperature = temperature
+      self.addLogEntry({
+        currentTemp: temperature
+      })
+      this.currentTempCharacteristic.updateValue(temperature, null)
+    }
   }
 
   if (dp === '1.HUMIDITY') {
-    self.addLogEntry({
-      currentTemp: parseFloat(newValue)
-    })
-    self.currentHumidityCharacteristic.updateValue(parseFloat(newValue), null)
+    let humidity = this.toRangedPercentage(newValue, this.toFiniteNumber(this.currentHumidity, NaN), 0, 100)
+    if (Number.isFinite(humidity)) {
+      this.currentHumidity = humidity
+      self.addLogEntry({
+        humidity: humidity
+      })
+      self.currentHumidityCharacteristic.updateValue(humidity, null)
+    }
   }
 
   if (dp === '2.SETPOINT') {
-    self.addLogEntry({
-      setTemp: parseFloat(newValue)
-    })
-    self.TargetTemperatureCharacteristic.updateValue(parseFloat(newValue), null)
+    let setTemperature = this.toFiniteNumber(newValue, this.toFiniteNumber(this.targetTemperature, NaN))
+    if (Number.isFinite(setTemperature)) {
+      this.targetTemperature = setTemperature
+      self.addLogEntry({
+        setTemp: setTemperature
+      })
+      self.TargetTemperatureCharacteristic.updateValue(setTemperature, null)
+    }
   }
 }
 
