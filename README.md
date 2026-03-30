@@ -5,7 +5,6 @@
 </p>
 
 [![Donate some coins if you want](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DZ5CW7XC9LXMN)
-[![Build Status](https://travis-ci.org/thkl/homebridge-homematic.svg?branch=master)](https://travis-ci.org/thkl/homebridge-homematic) [![Greenkeeper badge](https://badges.greenkeeper.io/thkl/homebridge-homematic.svg)](https://greenkeeper.io/)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 Supports the Homematic System on HomeBridge Platform
@@ -19,7 +18,7 @@ This repository can be used as a maintained fork of
 
 Install this fork directly from GitHub:
 
-`sudo npm install -g --omit=dev https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git`
+`sudo npm install -g --omit=dev git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git#main`
 
 
 
@@ -29,10 +28,12 @@ Switches , Dimmer , RotaryHandles, WindowContacts, MotionSensor, Blinds, Keymati
 ProgramStarter, SmokeDetector, Thermostats ....
 
 # Installation
-0. Make sure that you use a node version >= 4.5
-1. Install homebridge using: npm install -g homebridge
-2. Install this plugin using: npm install -g homebridge-homematic
-3. Update your configuration file. See the sample below.
+1. Make sure your Node.js version is compatible with your Homebridge release (use a current LTS version).
+2. Install Homebridge (if not installed already): `npm install -g homebridge`
+3. Remove an old global install of this plugin: `npm uninstall -g homebridge-homematic`
+4. Install this maintained fork: `npm install -g --omit=dev git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git#main`
+5. Restart Homebridge.
+6. Keep your existing platform config (`"platform": "HomeMatic"`). See the sample below.
 
 # Configuration
 

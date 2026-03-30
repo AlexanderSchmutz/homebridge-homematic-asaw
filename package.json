@@ -1,14 +1,18 @@
 {
   "name": "homebridge-homematic",
-  "version": "0.2.227",
-  "description": "Homematic plugin for homebridge: https://github.com/nfarina/homebridge",
+  "version": "0.2.228",
+  "description": "Homematic plugin for Homebridge (maintained fork of thkl/homebridge-homematic)",
   "license": "ISC",
   "keywords": [
     "homebridge-plugin"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/thkl/homebridge-homematic.git"
+    "url": "git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git"
+  },
+  "homepage": "https://github.com/AlexanderSchmutz/homebridge-homematic-asaw",
+  "bugs": {
+    "url": "https://github.com/AlexanderSchmutz/homebridge-homematic-asaw/issues"
   },
   "engines": {
     "node": ">=4.5.0",
@@ -83,10 +87,10 @@
   },
   "release-it": {
     "hooks": {
-      "before:release": "npx auto-changelog --commit-limit false https://raw.githubusercontent.com/thkl/homebridge-homematic/master/changelog-template.hbs"
+      "before:release": "npx auto-changelog --commit-limit false https://raw.githubusercontent.com/AlexanderSchmutz/homebridge-homematic-asaw/main/changelog-template.hbs"
     },
     "git": {
-      "changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/thkl/homebridge-homematic/master/changelog-template.hbs"
+      "changelog": "npx auto-changelog --stdout --commit-limit false --unreleased --template https://raw.githubusercontent.com/AlexanderSchmutz/homebridge-homematic-asaw/main/changelog-template.hbs"
     },
     "npm": {
       "publish": true
