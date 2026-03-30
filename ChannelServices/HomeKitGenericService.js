@@ -782,6 +782,39 @@ HomeKitGenericService.prototype = {
     // just a stub
   },
 
+  sanitizeCharacteristicValue: function (characteristic, value) {
+    let sanitized = value
+    if (sanitized === undefined || sanitized === null) {
+      return undefined
+    }
+
+    let props = characteristic.props || {}
+    let format = props.format
+
+    if (format === 'float' || format === 'int' || format === 'uint8' || format === 'uint16' || format === 'uint32') {
+      sanitized = this.toFiniteNumber(sanitized, undefined)
+    }
+
+    if (typeof sanitized === 'number') {
+      if (!Number.isFinite(sanitized)) {
+        return undefined
+      }
+
+      if (format === 'int' || format === 'uint8' || format === 'uint16' || format === 'uint32') {
+        sanitized = Math.round(sanitized)
+      }
+
+      if (typeof props.minValue === 'number' && sanitized < props.minValue) {
+        sanitized = props.minValue
+      }
+      if (typeof props.maxValue === 'number' && sanitized > props.maxValue) {
+        sanitized = props.maxValue
+      }
+    }
+
+    return sanitized
+  },
+
   cache: function (dp, value) {
     var that = this
 
@@ -795,9 +828,17 @@ HomeKitGenericService.prototype = {
     }
     if ((value !== undefined) && ((that.isWorking === false) || (that.ignoreWorking === true))) {
       if (that.currentStateCharacteristic[dp] !== undefined) {
-        that.stateCharacteristicWillChange(that.currentStateCharacteristic[dp], value)
-        that.currentStateCharacteristic[dp].setValue(value, null)
-        that.stateCharacteristicDidChange(that.currentStateCharacteristic[dp], value)
+        let characteristic = that.currentStateCharacteristic[dp]
+        let sanitized = that.sanitizeCharacteristicValue(characteristic, value)
+        if (sanitized === undefined) {
+          that.log.debug('[Generic] Skip invalid value for %s: %s', dp, value)
+          return
+        }
+
+        that.stateCharacteristicWillChange(characteristic, sanitized)
+        characteristic.setValue(sanitized, null)
+        that.stateCharacteristicDidChange(characteristic, sanitized)
+        value = sanitized
       }
       this.ccuCache.doCache(dp, value)
     } else {

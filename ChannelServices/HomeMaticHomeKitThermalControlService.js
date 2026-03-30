@@ -80,8 +80,8 @@ HomeMaticHomeKitThermalControlService.prototype.createDeviceService = function (
     .on('get', function (callback) {
       that.remoteGetValue('ACTUAL_TEMPERATURE', function (value) {
         that.log.debug('[TCS] Saving %s for %s', value, that.adress)
-        that.currentTemperature = parseFloat(value)
-        if (callback) callback(null, that.currentTemperature)
+        that.currentTemperature = that.toFiniteNumber(value, that.currentTemperature)
+        if (callback && Number.isFinite(that.currentTemperature)) callback(null, that.currentTemperature)
       })
     })
 
@@ -91,8 +91,8 @@ HomeMaticHomeKitThermalControlService.prototype.createDeviceService = function (
     this.currentHumidityCharacteristic = this.thermostat.getCharacteristic(Characteristic.CurrentRelativeHumidity)
       .on('get', function (callback) {
         that.query('ACTUAL_HUMIDITY', function (value) {
-          that.currentHumidity = parseFloat(value)
-          if (callback) callback(null, that.currentHumidity)
+          that.currentHumidity = that.toRangedPercentage(value, that.currentHumidity, 0, 100)
+          if (callback && Number.isFinite(that.currentHumidity)) callback(null, that.currentHumidity)
         })
       })
 

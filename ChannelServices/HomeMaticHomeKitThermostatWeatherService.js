@@ -21,8 +21,8 @@ HomeMaticHomeKitThermostatWeatherService.prototype.createDeviceService = functio
     .setProps({ minValue: -100 })
     .on('get', function (callback) {
       that.query('TEMPERATURE', function (value) {
-        that.currentTemperature = parseFloat(value)
-        if (callback) callback(null, value)
+        that.currentTemperature = that.toFiniteNumber(value, that.currentTemperature)
+        if (callback && Number.isFinite(that.currentTemperature)) callback(null, that.currentTemperature)
       })
     })
 
@@ -34,8 +34,8 @@ HomeMaticHomeKitThermostatWeatherService.prototype.createDeviceService = functio
   this.chum = humidity.getCharacteristic(Characteristic.CurrentRelativeHumidity)
     .on('get', function (callback) {
       that.query('HUMIDITY', function (value) {
-        that.currentHumidity = parseFloat(value)
-        if (callback) callback(null, value)
+        that.currentHumidity = that.toRangedPercentage(value, that.currentHumidity, 0, 100)
+        if (callback && Number.isFinite(that.currentHumidity)) callback(null, that.currentHumidity)
       })
     })
 
