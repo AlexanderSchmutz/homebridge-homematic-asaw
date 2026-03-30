@@ -12,6 +12,15 @@ Supports the Homematic System on HomeBridge Platform
 
 If you just want to add your HomeMatic devices (CCU3/Raspberrymatic/pivCCU) you may also like https://github.com/thkl/hap-homematic
 
+## Maintained Fork
+
+This repository can be used as a maintained fork of
+`thkl/homebridge-homematic` with compatibility and stability fixes.
+
+Install this fork directly from GitHub:
+
+`sudo npm install -g --omit=dev https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git`
+
 
 
 Devices currently supported:
