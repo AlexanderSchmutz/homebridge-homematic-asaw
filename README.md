@@ -20,7 +20,7 @@ Install this fork directly from GitHub:
 
 `sudo npm install -g --omit=dev git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git#main`
 
-If you publish this fork to npm as `homebridge-homematic-asaw`, installation can also be:
+This fork is published on npm as `homebridge-homematic-asaw`, so installation can also be:
 
 `sudo npm install -g --omit=dev homebridge-homematic-asaw`
 
@@ -37,7 +37,7 @@ ProgramStarter, SmokeDetector, Thermostats ....
 3. Remove an old global install of this plugin: `npm uninstall -g homebridge-homematic`
 4. Install this maintained fork:
    `npm install -g --omit=dev git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git#main`
-   or (after npm publish) `npm install -g --omit=dev homebridge-homematic-asaw`
+   or from npm: `npm install -g --omit=dev homebridge-homematic-asaw`
 5. Restart Homebridge.
 6. Keep your existing platform config (`"platform": "HomeMatic"`). See the sample below.
 
