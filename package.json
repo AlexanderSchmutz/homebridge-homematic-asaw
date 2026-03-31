@@ -1,6 +1,6 @@
 {
   "name": "homebridge-homematic-asaw",
-  "version": "0.2.231",
+  "version": "0.2.232",
   "description": "Homematic plugin for Homebridge (maintained fork of thkl/homebridge-homematic)",
   "license": "ISC",
   "keywords": [
