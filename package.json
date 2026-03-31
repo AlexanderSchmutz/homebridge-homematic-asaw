@@ -1,10 +1,16 @@
 {
   "name": "homebridge-homematic-asaw",
-  "version": "0.2.232",
+  "version": "0.2.233",
   "description": "Homematic plugin for Homebridge (maintained fork of thkl/homebridge-homematic)",
   "license": "ISC",
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "homebridge",
+    "homekit",
+    "homematic",
+    "ccu3",
+    "raspberrymatic",
+    "pivccu"
   ],
   "repository": {
     "type": "git",
