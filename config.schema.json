@@ -3,7 +3,7 @@
     "pluginType": "platform",
     "singular": true,
     "headerDisplay": "Homebridge plugin for the Homematic CCUs",
-    "footerDisplay": "For a detailed description, see the [README](https://github.com/thkl/homebridge-homematic#readme) file.",
+    "footerDisplay": "For a detailed description, see the [README](https://github.com/AlexanderSchmutz/homebridge-homematic-asaw#readme) file.",
     "schema": {
         "type": "object",
         "properties": {
