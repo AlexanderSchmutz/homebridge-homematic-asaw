@@ -7,6 +7,7 @@ const HomeMaticServiceClassLoader = require('./HomeMaticServiceClassLoader.js').
 const HomeMaticRegaRequest = require('./HomeMaticRegaRequest.js').HomeMaticRegaRequest
 const HomeMaticRegaRequestTestDriver = require('./HomeMaticRegaRequestTestDriver.js').HomeMaticRegaRequestTestDriver
 const HomeMaticCacheManager = require('./HomeMaticCacheManager.js').HomeMaticCacheManager
+const applyHomebridgeCompatibility = require('./util/HomebridgeCompatibility.js')
 
 // const inherits = require('util').inherits
 const path = require('path')
@@ -19,6 +20,7 @@ let _homebridge
 var isInTest = typeof global.it === 'function'
 
 module.exports = function (homebridge) {
+  applyHomebridgeCompatibility(homebridge.hap)
   _homebridge = homebridge
   uuid = homebridge.hap.uuid
   Service = homebridge.hap.Service
