@@ -2,6 +2,7 @@
 
 var HomeKitGenericService = require('./HomeKitGenericService.js').HomeKitGenericService
 var util = require('util')
+var HomeKitTypeFactory = require('../util/HomeKitTypeFactory.js')
 
 function HomeMaticHomeKitWeatherStationService (log, platform, id, name, type, adress, special, cfg, Service, Characteristic) {
   HomeMaticHomeKitWeatherStationService.super_.apply(this, arguments)
@@ -11,86 +12,78 @@ util.inherits(HomeMaticHomeKitWeatherStationService, HomeKitGenericService)
 
 HomeMaticHomeKitWeatherStationService.prototype.propagateServices = function (homebridge, Service, Characteristic) {
   var uuid = homebridge.uuid
+  var isRainingCharacteristicUUID = uuid.generate('HomeMatic:customchar:IsRainingCharacteristic')
+  var isRainingServiceUUID = uuid.generate('HomeMatic:customchar:IsRainingService')
+  var windSpeedCharacteristicUUID = uuid.generate('HomeMatic:customchar:WindSpeedCharacteristic')
+  var windSpeedServiceUUID = uuid.generate('HomeMatic:customchar:WindSpeedService')
+  var windDirectionCharacteristicUUID = uuid.generate('HomeMatic:customchar:WindDirectionCharacteristic')
+  var windDirectionServiceUUID = uuid.generate('HomeMatic:customchar:WindDirectionService')
+  var windRangeCharacteristicUUID = uuid.generate('HomeMatic:customchar:WindRangeCharacteristic')
+  var windRangeServiceUUID = uuid.generate('HomeMatic:customchar:WindRangeService')
 
-  Characteristic.IsRainingCharacteristic = function () {
-    var charUUID = uuid.generate('HomeMatic:customchar:IsRainingCharacteristic')
-    Characteristic.call(this, 'Regen', charUUID)
-    this.setProps({
+  Characteristic.IsRainingCharacteristic = HomeKitTypeFactory.createCharacteristic(
+    Characteristic,
+    'Regen',
+    isRainingCharacteristicUUID,
+    {
       format: Characteristic.Formats.BOOL,
       perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    })
-    this.value = this.getDefaultValue()
-  }
-  util.inherits(Characteristic.IsRainingCharacteristic, Characteristic)
+    }
+  )
+  Service.IsRainingService = HomeKitTypeFactory.createService(
+    Service,
+    isRainingServiceUUID,
+    [Characteristic.IsRainingCharacteristic]
+  )
 
-  Service.IsRainingService = function (displayName, subtype) {
-    var servUUID = uuid.generate('HomeMatic:customchar:IsRainingService')
-    Service.call(this, displayName, servUUID, subtype)
-    this.addCharacteristic(Characteristic.IsRainingCharacteristic)
-  }
-
-  util.inherits(Service.IsRainingService, Service)
-
-  Characteristic.WindSpeedCharacteristic = function () {
-    var charUUID = uuid.generate('HomeMatic:customchar:WindSpeedCharacteristic')
-    Characteristic.call(this, 'Wind Geschwindigkeit', charUUID)
-    this.setProps({
+  Characteristic.WindSpeedCharacteristic = HomeKitTypeFactory.createCharacteristic(
+    Characteristic,
+    'Wind Geschwindigkeit',
+    windSpeedCharacteristicUUID,
+    {
       format: Characteristic.Formats.FLOAT,
       unit: 'km/h',
       minStep: 0.1,
       perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    })
-    this.value = this.getDefaultValue()
-  }
-  util.inherits(Characteristic.WindSpeedCharacteristic, Characteristic)
+    }
+  )
+  Service.WindSpeedService = HomeKitTypeFactory.createService(
+    Service,
+    windSpeedServiceUUID,
+    [Characteristic.WindSpeedCharacteristic]
+  )
 
-  Service.WindSpeedService = function (displayName, subtype) {
-    var servUUID = uuid.generate('HomeMatic:customchar:WindSpeedService')
-    Service.call(this, displayName, servUUID, subtype)
-    this.addCharacteristic(Characteristic.WindSpeedCharacteristic)
-  }
-
-  util.inherits(Service.WindSpeedService, Service)
-
-  Characteristic.WindDirectionCharacteristic = function () {
-    var charUUID = uuid.generate('HomeMatic:customchar:WindDirectionCharacteristic')
-    Characteristic.call(this, 'Wind Richtung', charUUID)
-    this.setProps({
+  Characteristic.WindDirectionCharacteristic = HomeKitTypeFactory.createCharacteristic(
+    Characteristic,
+    'Wind Richtung',
+    windDirectionCharacteristicUUID,
+    {
       format: Characteristic.Formats.INTEGER,
       unit: 'Grad',
       perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    })
-    this.value = this.getDefaultValue()
-  }
-  util.inherits(Characteristic.WindDirectionCharacteristic, Characteristic)
+    }
+  )
+  Service.WindDirectionService = HomeKitTypeFactory.createService(
+    Service,
+    windDirectionServiceUUID,
+    [Characteristic.WindDirectionCharacteristic]
+  )
 
-  Service.WindDirectionService = function (displayName, subtype) {
-    var servUUID = uuid.generate('HomeMatic:customchar:WindDirectionService')
-    Service.call(this, displayName, servUUID, subtype)
-    this.addCharacteristic(Characteristic.WindDirectionCharacteristic)
-  }
-
-  util.inherits(Service.WindDirectionService, Service)
-
-  Characteristic.WindRangeCharacteristic = function () {
-    var charUUID = uuid.generate('HomeMatic:customchar:WindRangeCharacteristic')
-    Characteristic.call(this, 'Wind Schwankungsbreite', charUUID)
-    this.setProps({
+  Characteristic.WindRangeCharacteristic = HomeKitTypeFactory.createCharacteristic(
+    Characteristic,
+    'Wind Schwankungsbreite',
+    windRangeCharacteristicUUID,
+    {
       format: Characteristic.Formats.INTEGER,
       unit: 'Grad',
       perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    })
-    this.value = this.getDefaultValue()
-  }
-  util.inherits(Characteristic.WindRangeCharacteristic, Characteristic)
-
-  Service.WindRangeService = function (displayName, subtype) {
-    var servUUID = uuid.generate('HomeMatic:customchar:WindRangeService')
-    Service.call(this, displayName, servUUID, subtype)
-    this.addCharacteristic(Characteristic.WindRangeCharacteristic)
-  }
-
-  util.inherits(Service.WindRangeService, Service)
+    }
+  )
+  Service.WindRangeService = HomeKitTypeFactory.createService(
+    Service,
+    windRangeServiceUUID,
+    [Characteristic.WindRangeCharacteristic]
+  )
 }
 
 HomeMaticHomeKitWeatherStationService.prototype.createDeviceService = function (Service, Characteristic) {

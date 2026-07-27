@@ -2,6 +2,7 @@
 
 var HomeKitGenericService = require('./HomeKitGenericService.js').HomeKitGenericService
 var util = require('util')
+var HomeKitTypeFactory = require('../util/HomeKitTypeFactory.js')
 
 function HomeMaticHomeKitProgramService (log, platform, id, name, type, adress, special, cfg, Service, Characteristic) {
   HomeMaticHomeKitProgramService.super_.apply(this, arguments)
@@ -10,22 +11,21 @@ function HomeMaticHomeKitProgramService (log, platform, id, name, type, adress, 
 util.inherits(HomeMaticHomeKitProgramService, HomeKitGenericService)
 
 HomeMaticHomeKitProgramService.prototype.propagateServices = function (homebridge, Service, Characteristic) {
-  Characteristic.ProgramLaunchCharacteristic = function () {
-    Characteristic.call(this, 'Program', '5E0115D7-7594-4846-AFB7-F456389E81EC')
-    this.setProps({
+  Characteristic.ProgramLaunchCharacteristic = HomeKitTypeFactory.createCharacteristic(
+    Characteristic,
+    'Program',
+    '5E0115D7-7594-4846-AFB7-F456389E81EC',
+    {
       format: Characteristic.Formats.BOOL,
       perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
-    })
-    this.value = this.getDefaultValue()
-  }
-  util.inherits(Characteristic.ProgramLaunchCharacteristic, Characteristic)
+    }
+  )
 
-  Service.ProgramLaunchService = function (displayName, subtype) {
-    Service.call(this, displayName, 'B7F46B4D-3D69-4804-8114-393F257D4039', subtype)
-    this.addCharacteristic(Characteristic.ProgramLaunchCharacteristic)
-  }
-
-  util.inherits(Service.ProgramLaunchService, Service)
+  Service.ProgramLaunchService = HomeKitTypeFactory.createService(
+    Service,
+    'B7F46B4D-3D69-4804-8114-393F257D4039',
+    [Characteristic.ProgramLaunchCharacteristic]
+  )
 }
 
 HomeMaticHomeKitProgramService.prototype.createDeviceService = function (Service, Characteristic) {
