@@ -1,3 +1,16 @@
+Changelog for 0.2.235 (2026-07-27):
+====================================
+
+- Added compatibility with Homebridge 2.1 and newer and HAP-NodeJS 2.
+- Added support for Node.js 22 and 24.
+- Updated `fakegato-history` to 0.6.7 for the current HAP constants.
+- Replaced legacy function-based custom HAP types with class-based types.
+- Preserved all existing accessory, service, and characteristic UUIDs so an
+  upgrade does not require removing or re-pairing the Homebridge bridge.
+- Added automated compatibility tests for Node.js 22 and 24.
+- Verified the upgrade on a production Homebridge 2.2.1 installation with its
+  existing HomeKit accessories and pairing intact.
+
 Changelog for Unreleased:
 ======================
 

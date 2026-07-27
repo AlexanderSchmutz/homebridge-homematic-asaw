@@ -1,45 +1,69 @@
-# homebridge-homematic
+# homebridge-homematic-asaw
 
 <p align="center">
     <img src="docs/homebridge.png" height="200">
 </p>
 
+[![npm version](https://img.shields.io/npm/v/homebridge-homematic-asaw.svg)](https://www.npmjs.com/package/homebridge-homematic-asaw)
 [![Donate some coins if you want](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DZ5CW7XC9LXMN)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-Supports the Homematic System on HomeBridge Platform
+Homebridge plugin for Homematic CCU3, RaspberryMatic, and piVCCU systems.
 
-If you just want to add your HomeMatic devices (CCU3/Raspberrymatic/pivCCU) you may also like https://github.com/thkl/hap-homematic
+## Homebridge 2 support
 
-## Maintained Fork
+Version 0.2.235 adds compatibility with Homebridge 2.1 and newer. It supports
+the current HAP-NodeJS API and Node.js 22 and 24.
 
-This repository can be used as a maintained fork of
-`thkl/homebridge-homematic` with compatibility and stability fixes.
+The Homebridge platform identifier and all existing accessory, service, and
+characteristic UUIDs remain unchanged. Updating from an older version of this
+plugin therefore does not require removing or re-pairing the Homebridge bridge.
+As with every Homebridge update, creating a backup first is recommended.
 
-Install this fork directly from GitHub:
+## Maintained fork
 
-`sudo npm install -g --omit=dev git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git#main`
+This project is a maintained fork of
+[`thkl/homebridge-homematic`](https://github.com/thkl/homebridge-homematic).
+It preserves the existing HomeKit identities while providing compatibility and
+stability fixes for current Homebridge releases.
 
-This fork is published on npm as `homebridge-homematic-asaw`, so installation can also be:
+## Requirements
 
-`sudo npm install -g --omit=dev homebridge-homematic-asaw`
+- Homebridge 2.1.1 or newer
+- Node.js 22 or 24
+- Homematic CCU3, RaspberryMatic, or piVCCU
 
+## Installation
 
+Install the maintained package from npm:
 
-Devices currently supported:
+```sh
+sudo npm install -g --omit=dev homebridge-homematic-asaw
+```
 
-Switches , Dimmer , RotaryHandles, WindowContacts, MotionSensor, Blinds, Keymatic
-ProgramStarter, SmokeDetector, Thermostats ....
+Then restart Homebridge and keep the existing platform configuration:
 
-# Installation
-1. Make sure your Node.js version is compatible with your Homebridge release (use a current LTS version).
-2. Install Homebridge (if not installed already): `npm install -g homebridge`
-3. Remove an old global install of this plugin: `npm uninstall -g homebridge-homematic`
-4. Install this maintained fork:
-   `npm install -g --omit=dev git+https://github.com/AlexanderSchmutz/homebridge-homematic-asaw.git#main`
-   or from npm: `npm install -g --omit=dev homebridge-homematic-asaw`
-5. Restart Homebridge.
-6. Keep your existing platform config (`"platform": "HomeMatic"`). See the sample below.
+```json
+"platform": "HomeMatic"
+```
+
+### Migrating from `homebridge-homematic`
+
+1. Create a Homebridge backup.
+2. Remove the unmaintained package:
+   `sudo npm uninstall -g homebridge-homematic`
+3. Install this maintained package:
+   `sudo npm install -g --omit=dev homebridge-homematic-asaw`
+4. Keep the existing HomeMatic configuration and restart Homebridge.
+
+Do not remove the bridge from Apple Home and do not clear the cached
+accessories. The plugin intentionally reuses the existing HomeKit identities.
+
+## Supported devices
+
+Supported device classes include switches, dimmers, rotary handles, window and
+door contacts, motion sensors, blinds, Keymatic locks, program starters, smoke
+detectors, thermostats, and many Homematic IP devices.
 
 # Configuration
 
